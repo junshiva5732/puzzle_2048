@@ -7,11 +7,12 @@ Flutter 로 작성, Android + iOS 대상.
 
 ```
 lib/
-  main.dart                    앱 진입, 테마 (세로 고정)
+  main.dart                    앱 진입, 테마 (세로 고정), 스크린샷용 LOCALE 강제
+  l10n/strings.dart            문자열 en/ko/ja (시스템 언어 자동, 미지원 언어는 영어)
   ads/ad_ids.dart              AdMob 광고 단위 ID  ← 출시 전 교체
   ads/ad_manager.dart          전면·보상형 광고 로드/노출 싱글톤
   widgets/banner_ad_widget.dart 하단 적응형 배너
-  game/game.dart               순수 게임 로직 (이동/합치기/스폰/되돌리기/직렬화)
+  game/game.dart               순수 게임 로직 (이동/합치기/스폰/되돌리기/이어하기/직렬화)
   services/game_storage.dart   최고 점수·진행 중 게임 저장 (SharedPreferences)
   theme/game_colors.dart       보드·타일 색상 (라이트/다크)
   widgets/board_widget.dart    4x4 보드, AnimatedPositioned 슬라이드
@@ -25,8 +26,11 @@ test/game_test.dart            게임 로직 유닛 테스트
 | 위치 | 종류 | 동작 |
 |---|---|---|
 | 화면 하단 | 배너 | 항상 표시 |
-| "새 게임" 시작 | 전면 | 2번 시작마다 1회 (`AdManager.interstitialEvery`), 로드 안 됐으면 광고 없이 진행 |
-| 되돌리기 (게임당 3회 무료 소진 후) | 보상형 | 끝까지 시청 시 3회 충전 후 즉시 되돌리기. 게임오버 화면에서도 동일 |
+| "새 게임" 시작 (게임오버 후 또는 진행 중 재시작) | 전면 | 매번 1회 (`AdManager.interstitialEvery = 1`), 로드 안 됐으면 광고 없이 진행 |
+| 게임오버 "광고 보고 이어하기" | 보상형 | 항상 노출. 끝까지 시청 시 가장 작은 타일 4개 제거(`Game.revive`), 점수 유지 |
+| 되돌리기 (게임당 3회 무료 소진 후) | 보상형 | 끝까지 시청 시 3회 충전 후 즉시 되돌리기 |
+
+전면 빈도·이어하기 제거 개수는 출시 후 이탈률을 보고 조정. 값은 `ad_manager.dart`, `game.dart` 상수 하나씩.
 
 ## 개발 빌드
 
@@ -36,8 +40,16 @@ flutter test
 flutter build apk --debug
 ```
 
-에뮬레이터: `flutter emulators --launch Small_Phone_API_35` 후 `flutter run`.
-에뮬레이터/데스크톱에서는 방향키로도 조작 가능.
+에뮬레이터: 이 프로젝트 전용 AVD `Puzzle2048_API_35` (다른 프로젝트 세션과 간섭 방지).
+`flutter emulators --launch Puzzle2048_API_35` 후 `flutter run`. 방향키로도 조작 가능.
+
+언어 확인: `flutter run --dart-define=LOCALE=ja` (디버그 전용, ko/en/ja).
+스토어 스크린샷: `bash tool/capture_screens.sh <ko|en|ja> [adb serial]` → `python tool/make_store_assets.py`.
+
+## 현지화
+시스템 언어를 따라 한국어 / 영어 / 일본어. 그 외 언어는 영어. 앱 이름도 언어별
+(`android/app/src/main/res/values*/strings.xml`, iOS 는 기본 "2048 Puzzle").
+문자열은 전부 `lib/l10n/strings.dart` 한 파일.
 
 ### 이 PC 전용 메모
 Java 의 AF_UNIX 소켓이 `%TEMP%` 아래에서 실패해 Gradle 이 "Unable to establish loopback connection" 으로
@@ -65,8 +77,9 @@ Java 의 AF_UNIX 소켓이 `%TEMP%` 아래에서 실패해 Gradle 이 "Unable to
 - [x] 앱 아이콘: `tool/make_icon.py` → `dart run flutter_launcher_icons`
 - [x] `flutter build appbundle --release` → `build/app/outputs/bundle/release/app-release.aab` (업로드 키 서명 확인됨)
 - [ ] Play Console 에 앱 생성 → 내부 테스트 트랙에 `.aab` 업로드
-- [x] 스토어 등록 정보 초안: `store/listing.md` (설명문, 카테고리, 데이터 보안 양식 답변)
-- [x] 그래픽: `store/icon-512.png`, `store/feature-graphic.png`, `store/screenshots/01~04.png` (`tool/make_store_assets.py`)
+- [x] 스토어 등록 정보: `store/listing.md` — ko/en/ja 설명문(ASO 키워드 반영), 카테고리, 데이터 보안 양식 답변
+- [x] 그래픽: `store/icon-512.png`, `store/<ko|en|ja>/feature-graphic.png`, `store/<lang>/screenshots/01~04.png`
+- [ ] Play Console 에서 기본 언어 en-US + 번역 ko-KR, ja-JP 추가, 출시 국가 전체
 
 ### 4. iOS 출시 (Mac 필요)
 - [ ] Apple Developer Program 가입 (연 $99)
@@ -77,4 +90,4 @@ Java 의 AF_UNIX 소켓이 `%TEMP%` 아래에서 실패해 Gradle 이 "Unable to
 ### 5. 출시 후 확장 아이디어
 - [ ] 효과음 / 사운드 토글
 - [ ] 5x5 · 3x3 보드 크기 선택
-- [ ] 다국어 (영어)
+- [x] 다국어 (영어·일본어)

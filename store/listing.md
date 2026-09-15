@@ -76,7 +76,7 @@ ASO 키워드 방침: 제목·간단한 설명·자세한 설명 앞부분에 �
 
 ### App name (30)
 ```
-2048 Puzzle - Number Merge Game
+2048 Puzzle: Number Merge Game
 ```
 
 ### Short description (80)
