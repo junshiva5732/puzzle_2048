@@ -147,4 +147,20 @@ void main() {
     expect(copy.keepPlaying, isTrue);
     expect(copy.hasWon, isTrue);
   });
+
+  test('revive clears the smallest tiles and keeps score', () {
+    final g = boardOf([
+      [2, 4, 2, 4],
+      [4, 2, 4, 2],
+      [2, 4, 2, 4],
+      [4, 2, 4, 2],
+    ])..score = 500;
+    expect(g.isOver, isTrue);
+    g.revive();
+    expect(g.tiles.length, 16 - Game.reviveClears);
+    expect(g.tiles.where((t) => t.value == 2).length, 8 - Game.reviveClears);
+    expect(g.score, 500);
+    expect(g.isOver, isFalse);
+    expect(g.canUndo, isFalse);
+  });
 }

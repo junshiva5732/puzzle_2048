@@ -178,6 +178,20 @@ class Game {
     return MoveResult(moved: true, gained: gained, ghosts: ghosts);
   }
 
+  /// 게임오버 후 "이어하기": 값이 작은 타일 [reviveClears] 개를 지워 빈 칸을 만든다.
+  /// 점수와 되돌리기 기록은 유지한다 (보상형 광고 보상).
+  static const reviveClears = 4;
+  void revive() {
+    final sorted = tiles.toList()..sort((a, b) => a.value.compareTo(b.value));
+    final remove = sorted.take(reviveClears).toSet();
+    tiles.removeWhere(remove.contains);
+    for (final t in tiles) {
+      t.merged = false;
+      t.isNew = false;
+    }
+    _history.clear();
+  }
+
   /// 직전 이동을 취소한다. 되돌리기 횟수가 없거나 기록이 없으면 false.
   bool undo() {
     if (_history.isEmpty || undosLeft <= 0) return false;

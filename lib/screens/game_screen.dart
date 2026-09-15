@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../ads/ad_manager.dart';
 import '../game/game.dart';
+import '../l10n/strings.dart';
 import '../services/game_storage.dart';
 import '../theme/game_colors.dart';
 import '../widgets/banner_ad_widget.dart';
@@ -34,6 +35,8 @@ class _GameScreenState extends State<GameScreen> {
   Offset _dragStart = Offset.zero;
   bool _dragHandled = false;
   static const _swipeThreshold = 24.0;
+
+  S get _s => S.of(context);
 
   @override
   void initState() {
@@ -92,19 +95,25 @@ class _GameScreenState extends State<GameScreen> {
     widget.storage.saveGame(_game);
   }
 
+  void _showAdNotReady() {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(_s.adNotReady)));
+    AdManager.instance.loadRewarded();
+  }
+
   /// 되돌리기 횟수 소진 → 보상형 광고로 충전.
   Future<void> _offerUndoRefill() async {
+    final s = _s;
     final watch = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('되돌리기 충전'),
-        content: Text('되돌리기를 모두 사용했어요.\n짧은 광고를 보면 ${Game.undoRefill}회가 충전됩니다.'),
+        title: Text(s.refillTitle),
+        content: Text(s.refillBody(Game.undoRefill)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('취소')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(s.cancel)),
           FilledButton.icon(
             onPressed: () => Navigator.pop(ctx, true),
             icon: const Icon(Icons.play_circle_outline),
-            label: const Text('광고 보기'),
+            label: Text(s.watchAd),
           ),
         ],
       ),
@@ -116,25 +125,36 @@ class _GameScreenState extends State<GameScreen> {
       setState(() => _game.undosLeft += Game.undoRefill);
       _undo();
     });
-    if (!shown && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('광고를 아직 불러오지 못했어요. 잠시 후 다시 시도해 주세요.')),
-      );
-      AdManager.instance.loadRewarded();
-    }
+    if (!shown && mounted) _showAdNotReady();
+  }
+
+  /// 게임오버 → 보상형 광고 → 작은 타일을 지우고 이어하기.
+  void _continueWithAd() {
+    final shown = AdManager.instance.showRewarded(onReward: () {
+      if (!mounted) return;
+      setState(() {
+        _game.revive();
+        _ghosts = const [];
+        _overlay = _Overlay.none;
+      });
+      widget.storage.saveGame(_game);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(_s.revived)));
+    });
+    if (!shown) _showAdNotReady();
   }
 
   Future<void> _newGame() async {
     // 진행 중인 게임이 있으면 확인
     if (_overlay == _Overlay.none && _game.score > 0) {
+      final s = _s;
       final ok = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('새 게임'),
-          content: const Text('현재 진행 상황이 사라집니다.\n새 게임을 시작할까요?'),
+          title: Text(s.newGame),
+          content: Text(s.newGameBody),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('취소')),
-            FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('시작')),
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(s.cancel)),
+            FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(s.start)),
           ],
         ),
       );
@@ -163,17 +183,13 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void _showHelp() {
+    final s = _s;
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('게임 방법'),
-        content: const Text(
-          '화면을 상·하·좌·우로 밀어 타일을 움직이세요.\n'
-          '같은 숫자의 타일이 부딪히면 하나로 합쳐집니다.\n\n'
-          '2048 타일을 만들면 승리! 그 뒤로도 계속 이어서 더 큰 숫자에 도전할 수 있어요.\n\n'
-          '되돌리기는 게임당 ${Game.freeUndos}회 무료이며, 광고를 보면 ${Game.undoRefill}회 더 충전됩니다.',
-        ),
-        actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('확인'))],
+        title: Text(s.howToPlay),
+        content: Text(s.helpBody(Game.freeUndos, Game.undoRefill)),
+        actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: Text(s.ok))],
       ),
     );
   }
@@ -242,6 +258,7 @@ class _GameScreenState extends State<GameScreen> {
 
   Widget _buildContent(BuildContext context, BoxConstraints box) {
     final c = GameColors.of(context);
+    final s = _s;
     const pad = 16.0;
     // 헤더(약 150) 를 뺀 남은 높이와 너비 중 작은 쪽을 보드 한 변으로
     final side = math.min(box.maxWidth - pad * 2, box.maxHeight - 170).clamp(200.0, 520.0);
@@ -261,9 +278,9 @@ class _GameScreenState extends State<GameScreen> {
                   style: TextStyle(fontSize: 52, fontWeight: FontWeight.w900, color: c.text, height: 1),
                 ),
                 const Spacer(),
-                _ScoreBox(label: '점수', value: _game.score, gain: _lastGain, gainSerial: _gainSerial),
+                _ScoreBox(label: s.score, value: _game.score, gain: _lastGain, gainSerial: _gainSerial),
                 const SizedBox(width: 8),
-                _ScoreBox(label: '최고', value: _best),
+                _ScoreBox(label: s.best, value: _best),
               ],
             ),
           ),
@@ -274,21 +291,21 @@ class _GameScreenState extends State<GameScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    '타일을 합쳐 2048을 만드세요',
+                    s.subtitle,
                     style: TextStyle(color: c.textMuted, fontSize: 14),
                   ),
                 ),
                 _IconButton(
                   icon: Icons.undo,
                   badge: _game.undosLeft > 0 ? '${_game.undosLeft}' : 'AD',
-                  tooltip: '되돌리기',
+                  tooltip: s.undo,
                   enabled: _game.canUndo,
                   onTap: _undo,
                 ),
                 const SizedBox(width: 6),
-                _IconButton(icon: Icons.refresh, tooltip: '새 게임', onTap: _newGame),
+                _IconButton(icon: Icons.refresh, tooltip: s.newGame, onTap: _newGame),
                 const SizedBox(width: 6),
-                _IconButton(icon: Icons.help_outline, tooltip: '게임 방법', onTap: _showHelp),
+                _IconButton(icon: Icons.help_outline, tooltip: s.howToPlay, onTap: _showHelp),
               ],
             ),
           ),
@@ -306,8 +323,10 @@ class _GameScreenState extends State<GameScreen> {
 
   Widget _buildOverlay(double side) {
     final c = GameColors.of(context);
+    final s = _s;
     final visible = _overlay != _Overlay.none;
     final won = _overlay == _Overlay.won;
+    final fg = won ? const Color(0xFFF9F6F2) : c.text;
     return IgnorePointer(
       ignoring: !visible,
       child: AnimatedOpacity(
@@ -315,7 +334,7 @@ class _GameScreenState extends State<GameScreen> {
         duration: const Duration(milliseconds: 350),
         child: Container(
           decoration: BoxDecoration(
-            color: (won ? const Color(0xFFEDC22E) : c.background).withValues(alpha: 0.82),
+            color: (won ? const Color(0xFFEDC22E) : c.background).withValues(alpha: 0.85),
             borderRadius: BorderRadius.circular(side * 0.03),
           ),
           alignment: Alignment.center,
@@ -323,29 +342,27 @@ class _GameScreenState extends State<GameScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                won ? '2048 달성!' : '게임 오버',
-                style: TextStyle(
-                  fontSize: side * 0.13,
-                  fontWeight: FontWeight.w900,
-                  color: won ? const Color(0xFFF9F6F2) : c.text,
-                ),
+                won ? s.youWin : s.gameOver,
+                style: TextStyle(fontSize: side * 0.12, fontWeight: FontWeight.w900, color: fg),
               ),
               const SizedBox(height: 4),
               Text(
-                '점수 ${_game.score}',
-                style: TextStyle(fontSize: side * 0.055, color: won ? const Color(0xFFF9F6F2) : c.textMuted),
+                s.scoreLine(_game.score),
+                style: TextStyle(fontSize: side * 0.055, color: won ? fg : c.textMuted),
               ),
               const SizedBox(height: 20),
-              if (won)
-                _BigButton(label: '계속하기', icon: Icons.play_arrow, onTap: _keepPlaying)
-              else if (_game.canUndo)
-                _BigButton(
-                  label: _game.undosLeft > 0 ? '되돌리기 (${_game.undosLeft}회 남음)' : '광고 보고 되돌리기',
-                  icon: _game.undosLeft > 0 ? Icons.undo : Icons.play_circle_outline,
-                  onTap: _undo,
-                ),
+              if (won) ...[
+                _BigButton(label: s.keepGoing, icon: Icons.play_arrow, onTap: _keepPlaying),
+              ] else ...[
+                // 이어하기(보상형)는 항상 노출. 되돌리기는 무료 횟수가 남았을 때만.
+                _BigButton(label: s.continueWithAd, icon: Icons.play_circle_outline, onTap: _continueWithAd),
+                if (_game.canUndo && _game.undosLeft > 0) ...[
+                  const SizedBox(height: 10),
+                  _BigButton(label: s.undoLeft(_game.undosLeft), icon: Icons.undo, onTap: _undo, secondary: true),
+                ],
+              ],
               const SizedBox(height: 10),
-              _BigButton(label: '새 게임', icon: Icons.refresh, onTap: _newGame, secondary: true),
+              _BigButton(label: s.newGame, icon: Icons.refresh, onTap: _newGame, secondary: true),
             ],
           ),
         ),

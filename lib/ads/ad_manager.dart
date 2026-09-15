@@ -13,10 +13,10 @@ class AdManager {
   InterstitialAd? _interstitial;
   RewardedAd? _rewarded;
 
-  /// 전면 광고를 너무 자주 띄우지 않기 위한 카운터.
-  /// [interstitialEvery] 번째 요청마다 한 번 노출.
+  /// 전면 광고 노출 빈도: [interstitialEvery] 번째 요청마다 한 번.
+  /// 1 이면 새 게임을 시작할 때마다(=게임오버마다) 노출. 이탈률을 보고 조정한다.
   int _interstitialRequests = 0;
-  static const interstitialEvery = 2;
+  static const interstitialEvery = 1;
 
   Future<void> init() async {
     await MobileAds.instance.initialize();
