@@ -1,0 +1,35 @@
+name: puzzle_2048
+description: "2048 퍼즐 게임. AdMob 광고(배너 / 전면 / 보상형)로 수익화."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.0-149.0.dev
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  google_mobile_ads: ^6.0.0
+  shared_preferences: ^2.5.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+
+# 앱 아이콘 생성: dart run flutter_launcher_icons
+# 원본 이미지는 tool/make_icon.py 로 생성.
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"
+  adaptive_icon_background: "#8F7A66"
+  adaptive_icon_foreground: "assets/icon/icon_fg.png"
+  adaptive_icon_monochrome: "assets/icon/icon_fg.png"
+  remove_alpha_ios: true
