@@ -8,15 +8,16 @@ import 'package:flutter/foundation.dart';
 ///   개발 중 실제 광고를 클릭하면 무효 트래픽으로 계정이 정지될 수 있으므로.
 /// - 릴리즈 빌드(`--release`, 스토어 배포): 실제 ID.
 ///
-/// TODO(AdMob): AdMob 콘솔에서 "2048 퍼즐" 앱을 등록하고 광고 단위 3개를 만든 뒤
-/// 아래 `_androidReal` 과 android/app/src/main/AndroidManifest.xml 의 APPLICATION_ID 를 교체할 것.
-/// 교체 전까지는 릴리즈 빌드도 테스트 ID 를 쓴다 (수익은 없지만 정책 위반도 없다).
+/// Android 실제 ID: AdMob 앱 "2048 Puzzle" (ca-app-pub-7493209423244427~3163274362), 2026-09-16 등록.
 class AdIds {
   AdIds._();
 
   // ── 실제 ID ─────────────────────────────────────────────────────────
-  // TODO(AdMob): 실제 ID 로 교체
-  static const _androidReal = _androidTest;
+  static const _androidReal = _Ids(
+    banner: 'ca-app-pub-7493209423244427/4532196356',
+    interstitial: 'ca-app-pub-7493209423244427/9191917089',
+    rewarded: 'ca-app-pub-7493209423244427/4340624668',
+  );
 
   // TODO(iOS): AdMob 에서 iOS 앱 등록 후 교체
   static const _iosReal = _iosTest;

@@ -59,10 +59,9 @@ Java 의 AF_UNIX 소켓이 `%TEMP%` 아래에서 실패해 Gradle 이 "Unable to
 ## 출시 체크리스트
 
 ### 1. AdMob
-- [ ] https://admob.google.com 에서 앱 등록 (Android, iOS 각각) — 앱 이름 "2048 퍼즐", 패키지 `com.jun5731.puzzle_2048`
-- [ ] 광고 단위 3개 생성: 배너 / 전면 / 보상형 (플랫폼별 → 총 6개)
-- [ ] `lib/ads/ad_ids.dart` 의 `_androidReal` 을 실제 ID 로 교체 (지금은 테스트 ID 를 가리킴)
-- [ ] `android/app/src/main/AndroidManifest.xml` 의 `APPLICATION_ID` 교체 (지금은 Google 샘플 App ID)
+- [x] AdMob Android 앱 "2048 Puzzle" 등록 (App ID `ca-app-pub-7493209423244427~3163274362`, 2026-09-16). 스토어 연결은 Play 게시 후 "앱 스토어 연결"로.
+- [x] 광고 단위 3개: 배너 `/4532196356`, 전면 `/9191917089`, 보상형 `/4340624668` (iOS 는 iOS 앱 등록 후 별도)
+- [x] `lib/ads/ad_ids.dart` `_androidReal` 실제 ID 반영, `AndroidManifest.xml` APPLICATION_ID 교체 (versionCode 3)
 - [ ] `ios/Runner/Info.plist` 의 `GADApplicationIdentifier` 교체
 - [ ] 개발 중 실제 ID로 광고 클릭 금지 (계정 정지 사유). 테스트 기기 등록 권장.
 - [ ] AdMob 결제 정보 + 세금 정보 입력 (오늘의 운세와 같은 계정이면 이미 완료)

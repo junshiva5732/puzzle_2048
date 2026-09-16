@@ -27,11 +27,10 @@
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
-        <!-- AdMob App ID. TODO(AdMob): 콘솔에서 "2048 퍼즐" 앱 등록 후 실제 App ID 로 교체.
-             지금은 Google 공식 샘플 App ID (테스트 전용). -->
+        <!-- AdMob App ID (실제 ID, AdMob 앱 "2048 Puzzle") -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713"/>
+            android:value="ca-app-pub-7493209423244427~3163274362"/>
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
