@@ -2,7 +2,7 @@ name: puzzle_2048
 description: "2048 퍼즐 게임. AdMob 광고(배너 / 전면 / 보상형)로 수익화."
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.8.0-149.0.dev

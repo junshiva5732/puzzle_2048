@@ -76,7 +76,8 @@ Java 의 AF_UNIX 소켓이 `%TEMP%` 아래에서 실패해 Gradle 이 "Unable to
 - [x] 릴리즈 서명 키: `android/upload-keystore.jks` + `android/key.properties` (git 제외 — **반드시 백업**, 별칭 `upload`, PKCS12)
 - [x] 앱 아이콘: `tool/make_icon.py` → `dart run flutter_launcher_icons`
 - [x] `flutter build appbundle --release` → `build/app/outputs/bundle/release/app-release.aab` (업로드 키 서명 확인됨)
-- [ ] Play Console 에 앱 생성 → 내부 테스트 트랙에 `.aab` 업로드
+- [x] Play Console 앱 생성(앱 ID 4972327766453903926), 등록정보 3개 언어, 앱 콘텐츠 선언 10개, 콘텐츠 등급 전체이용가, 테스터 목록 완료
+- [ ] 내부 테스트 트랙에 `.aab` 업로드 → 출시 시작 (targetSdk 36 필수, versionCode 2 빌드)
 - [x] 스토어 등록 정보: `store/listing.md` — ko/en/ja 설명문(ASO 키워드 반영), 카테고리, 데이터 보안 양식 답변
 - [x] 그래픽: `store/icon-512.png`, `store/<ko|en|ja>/feature-graphic.png`, `store/<lang>/screenshots/01~04.png`
 - [ ] Play Console 에서 기본 언어 en-US + 번역 ko-KR, ja-JP 추가, 출시 국가 전체
