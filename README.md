@@ -76,9 +76,9 @@ Java 의 AF_UNIX 소켓이 `%TEMP%` 아래에서 실패해 Gradle 이 "Unable to
 - [x] 앱 아이콘: `tool/make_icon.py` → `dart run flutter_launcher_icons`
 - [x] `flutter build appbundle --release` → `build/app/outputs/bundle/release/app-release.aab` (업로드 키 서명 확인됨)
 - [x] Play Console 앱 생성(앱 ID 4972327766453903926), 등록정보 3개 언어, 앱 콘텐츠 선언 10개, 콘텐츠 등급 전체이용가, 테스터 목록 완료
-- [x] 내부 테스트 출시 완료 (2026-09-16, 1.0.0 / versionCode 2, targetSdk 36). 테스터 참여 링크: https://play.google.com/apps/internaltest/4701527852991593287 (테스터 목록 "Internal testers")
+- [x] 내부 테스트 출시 완료 (2026-09-16). 현재 활성 버전 1.0.0 (versionCode 3, 실제 AdMob ID, targetSdk 36). 테스터 참여 링크: https://play.google.com/apps/internaltest/4701527852991593287 (테스터 목록 "Internal testers")
 - [ ] 비공개 테스트: 테스터 12명 이상, 14일 연속 → 프로덕션 액세스 신청 (개인 계정 필수 절차)
-- [ ] AdMob 실제 ID 반영 후 versionCode 3 으로 재빌드·업로드, 프로덕션 출시
+- [ ] 비공개 테스트 완료 후 프로덕션 출시 → AdMob "앱 스토어 연결"로 앱 검토 진행
 - [x] 스토어 등록 정보: `store/listing.md` — ko/en/ja 설명문(ASO 키워드 반영), 카테고리, 데이터 보안 양식 답변
 - [x] 그래픽: `store/icon-512.png`, `store/<ko|en|ja>/feature-graphic.png`, `store/<lang>/screenshots/01~04.png`
 - [x] Play Console 기본 언어 en-US + 번역 ko-KR, ja-JP (텍스트만, 그래픽은 en 상속)
