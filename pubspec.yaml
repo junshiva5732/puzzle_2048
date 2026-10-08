@@ -24,6 +24,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/brand/
 
 # 앱 아이콘 생성: dart run flutter_launcher_icons
 # 원본 이미지는 tool/make_icon.py 로 생성.

@@ -7,6 +7,7 @@ import 'ads/ad_manager.dart';
 import 'l10n/strings.dart';
 import 'screens/game_screen.dart';
 import 'services/game_storage.dart';
+import 'moament_splash.dart';
 
 /// 스크린샷 촬영용 언어 강제 (디버그 빌드에서만 동작).
 /// 예: flutter build apk --debug --dart-define=LOCALE=ja
@@ -29,6 +30,7 @@ class PuzzleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     const seed = Color(0xFF8F7A66);
     return MaterialApp(
+      builder: (context, child) => MoamentSplash(child: child!),
       onGenerateTitle: (context) => S.of(context).appTitle,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(colorSchemeSeed: seed, useMaterial3: true),
