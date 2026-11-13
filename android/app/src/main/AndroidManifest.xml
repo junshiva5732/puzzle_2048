@@ -30,7 +30,7 @@
         <!-- AdMob App ID (실제 ID, AdMob 앱 "2048 Puzzle") -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-7493209423244427~3163274362"/>
+            android:value="ca-app-pub-6374122322136943~7714550395"/>
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
